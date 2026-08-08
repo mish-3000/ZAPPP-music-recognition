@@ -1,9 +1,35 @@
 import subprocess
 import os
+import matplotlib.pyplot as plt
+import numpy as np
+import wave, sys
+subprocess.run(['ffmpeg', '-n', '-i'])
 mp3Files=r'C:\Users\Hp\OneDrive\Desktop\reactjs\shazam\database\mp3Files'
 wavFiles=r'C:\Users\Hp\OneDrive\Desktop\reactjs\shazam\database\wavFiles'
 pathToffmpeg = r"C:\ffmpeg-master-latest-win64-gpl-shared\bin\ffmpeg.exe"
+wavFilesPaths = []
+
 for file in os.listdir(mp3Files):
-    subprocess.call([pathToffmpeg,'-i', os.path.join(mp3Files, file), os.path.join(wavFiles, str(file.split('.')[0]+'.wav'))]) 
+    subprocess.call([pathToffmpeg,'-n', '-i', os.path.join(mp3Files, file), os.path.join(wavFiles, str(file.split('.')[0]+'.wav'))]) 
     print(f'Converted {file} to wav format')
-    
+    wavFilesPaths.append(os.path.join(wavFiles, str(file.split('.')[0]+'.wav')))
+def visualize(wavFilesPaths):
+    for wavFile in wavFilesPaths:
+        raw = wave.open(wavFile)
+        signal = raw.readframes(-1)
+        signal = np.frombuffer(signal, dtype='int16')
+        if raw.getnchannels() == 2:
+            expanded_signal = signal.reshape(-1, 2)
+            mono=expanded_signal.mean(axis=1)
+        else:
+            mono=signal
+        frameRate = raw.getframerate()
+        time = np.linspace(0, len(mono) / frameRate, num=len(mono))
+        plt.figure()
+        plt.title('Waveform')
+        plt.xlabel('Time (s)')
+        plt.ylabel('Amplitude')
+        plt.plot(time, mono)
+        plt.show()
+
+visualize(wavFilesPaths)
