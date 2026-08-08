@@ -2,3 +2,7 @@
 
 *.mp3
 *.wav
+venv/
+venv_win/
+.venv/
+env/
