@@ -13,7 +13,7 @@ for file in os.listdir(mp3Files):
     subprocess.call([pathToffmpeg,'-n', '-i', os.path.join(mp3Files, file), os.path.join(wavFiles, str(file.split('.')[0]+'.wav'))]) 
     print(f'Converted {file} to wav format')
     wavFilesPaths.append(os.path.join(wavFiles, str(file.split('.')[0]+'.wav')))
-def visualize(wavFilesPaths):
+"""def visualize(wavFilesPaths):
     for wavFile in wavFilesPaths:
         raw = wave.open(wavFile)
         signal = raw.readframes(-1)
@@ -32,4 +32,4 @@ def visualize(wavFilesPaths):
         plt.plot(time, mono)
         plt.show()
 
-visualize(wavFilesPaths)
+visualize(wavFilesPaths)"""
