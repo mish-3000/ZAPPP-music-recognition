@@ -6,11 +6,11 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import wavio
-def show_spectrogram(waveFilesPaths):
+def get_Sxx(waveFilesPaths):
     for file in waveFilesPaths:
         wavData = wavio.read(file)
         sampleRate = wavData.rate
-        signal = wavData.data
+        signal = wavData.data; '''returns a 2d array always, even if the audio is mono'''
         if signal.shape[1] == 2:
             mono=signal.mean(axis=1)
         else:
@@ -30,10 +30,18 @@ def show_spectrogram(waveFilesPaths):
         overlap = window_samples - step_samples
         freq, time, Sxx = spectrogram(mono, fs=sampleRate, window=window, nperseg=window_samples, noverlap=overlap)
         melxx=np.where(Sxx>0, 10*np.log10(Sxx), -100)
+        
+        return freq, time, melxx
+
+def show_spectrogram(freq, time, melxx):
+        
         plt.figure()
         plt.pcolormesh(time[:100], freq, melxx[:, :100], shading='gouraud')
         plt.title('Spectrogram')
         plt.xlabel('Time (s)')
         plt.ylabel('Frequency (Hz)')
         plt.show()
-show_spectrogram(wavFilesPaths)
+
+for file in wavFilesPaths:
+    freq, time, melxx = get_Sxx(file)
+    show_spectrogram(freq, time, melxx)
