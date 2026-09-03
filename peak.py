@@ -20,41 +20,43 @@ def get_peaks(minFreqBin, maxPeaksPerTimeframe, minDB):
         def get_peaks_for_file():
             for i in range(Pxx.shape[1]):
                 if i in PxxFinalIndices[1]:
-                    dictValueIndices=np.where(PxxFinalIndices[1]==i)[0]; '''storing all indices where there is a peak for this particular time bin'''
-                    dictValues=Pxx[PxxFinalIndices[0][dictValueIndices], PxxFinalIndices[1][dictValueIndices]]
-                    if np.all(dictValues == -np.inf):
+                    ValueIndices=np.where(PxxFinalIndices[1]==i)[0]; '''storing all indices where there is a peak for this particular time bin'''
+                    Values=Pxx[PxxFinalIndices[0][ValueIndices], PxxFinalIndices[1][ValueIndices]]
+                    if np.all(Values == -np.inf):
                         continue; '''if all peaks are -infinity skip this iteration'''
-                    if len(dictValues)>maxPeaksPerTimeframe:
-                        sortedIndices=np.argsort(dictValues)[-maxPeaksPerTimeframe:][::-1]
-                        dictValuesSorted=dictValues[sortedIndices]
+                    if len(Values)>maxPeaksPerTimeframe:
+                        sortedIndices=np.argsort(Values)[-maxPeaksPerTimeframe:][::-1]
+                        ValuesSorted=Values[sortedIndices]
 
                     else:
-                        sortedIndices=np.argsort(dictValues)[::-1]
-                        dictValuesSorted=dictValues[sortedIndices]
+                        sortedIndices=np.argsort(Values)[::-1]
+                        ValuesSorted=Values[sortedIndices]
                     
                     freqTimeArr=[]; '''creating array of tuples of freq and time for which there ia a peak in this time bin'''
                     for j in sortedIndices:
-                        freqTimeTuple1=(freq[PxxFinalIndices[0][dictValueIndices[j]]+minFreqBin],time[i])
+                        freqTimeTuple1=(time[i],freq[PxxFinalIndices[0][ValueIndices[j]]+minFreqBin])
                         freqTimeArr.append(freqTimeTuple1)
                 
                 
-                    if -np.inf in dictValuesSorted:
-                        indicesWithoutNegInf=np.where(dictValuesSorted!=-np.inf)[0]; '''-inf can be considered as a peak if there were no other higher values in its neighbourhood, so excluding it'''
-                        dictValuesSorted=dictValuesSorted[indicesWithoutNegInf]
+                    if -np.inf in ValuesSorted:
+                        indicesWithoutNegInf=np.where(ValuesSorted!=-np.inf)[0]; '''-inf can be considered as a peak if there were no other higher values in its neighbourhood, so excluding it'''
+                        ValuesSorted=ValuesSorted[indicesWithoutNegInf]
                     
                         freqTimeArr=[]
                         for j in indicesWithoutNegInf:
-                            freqTimeTuple2=(freq[PxxFinalIndices[0][dictValueIndices[sortedIndices][j]]+minFreqBin],time[i])
+                            freqTimeTuple2=(time[i],freq[PxxFinalIndices[0][ValueIndices[sortedIndices][j]]+minFreqBin])
                             freqTimeArr.append(freqTimeTuple2)
-                    for j in range(len(dictValuesSorted)):  
-                        dictkeyTuple=freqTimeArr[j] ; '''for every peak in this time bin, a freq, time tuple and the peak value is yielded'''
-                        yield dictkeyTuple, dictValuesSorted[j]
-        peaksDict={}; '''for all time bins and all their respective peaks, freq, time tuple and peak value is yielded and stored in a dictionary with the key as tuple'''
-        for dictKeyTuple, dictValuesSorted in get_peaks_for_file():
-            peaksDict.update({dictKeyTuple:dictValuesSorted}) 
-        allPeaks[file]=peaksDict ; '''for all the n-songs, n dictionaries are created with the file name as key that contain dictionary of peak infos of that song'''            
+                    for j in range(len(ValuesSorted)):  
+                        Tuple=freqTimeArr[j] ; '''for every peak in this time bin, a freq, time tuple and the peak value is yielded'''
+                        yield Tuple
+        peaks=[]; '''for all time bins and all their respective peaks, freq, time tuple and peak value is yielded and stored in a dictionary with the key as tuple'''
+        for Tuple in get_peaks_for_file():
+            peaks.append(Tuple)
+            
+        allPeaks[file]=peaks ; '''for all the n-songs, n dictionaries are created with the file name as key that contain dictionary of peak infos of that song'''            
     return allPeaks
 
-
+def allDicts(file):
+    return get_peaks(minFreqBin, maxPeaksPerTimeframe, minDB)[file]
         
 

@@ -41,7 +41,7 @@ def show_spectrogram(freq, time, melxx):
         plt.xlabel('Time (s)')
         plt.ylabel('Frequency (Hz)')
         plt.show()
-
-for file in wavFilesPaths:
-    freq, time, melxx = get_Sxx(file)
-    show_spectrogram(freq, time, melxx)
+if __name__ == "__main__":
+    for file in wavFilesPaths:
+        freq, time, melxx = get_Sxx(file)
+        show_spectrogram(freq, time, melxx)
