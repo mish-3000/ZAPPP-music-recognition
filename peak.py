@@ -7,17 +7,18 @@ import numpy as np
 minFreqBin=23 ;'''approx 250Hz'''
 maxPeaksPerTimeframe=3
 minDB=-50
-def get_peaks(minFreqBin, maxPeaksPerTimeframe, minDB):
+def get_peaks(minFreqBin, maxPeaksPerTimeframe, minDB): 
     allPeaks={}
     for file in wavFilesPaths:
-        freq, time, melxx = get_Sxx(file)
-        input_melxx=np.where(melxx[minFreqBin:,:]>minDB, melxx[minFreqBin:,:], -np.inf); '''only consider frequencies above minFreqBin and power above minDB. powers below minDB are set to -inf so they will never be considered as peaks'''
+        def get_peaks_for_file(file):
+            freq, time, melxx = get_Sxx(file)
+            input_melxx=np.where(melxx[minFreqBin:,:]>minDB, melxx[minFreqBin:,:], -np.inf); '''only consider frequencies above minFreqBin and power above minDB. powers below minDB are set to -inf so they will never be considered as peaks'''
 
-        Pxx=ndimage.maximum_filter(input_melxx, size=5, mode='reflect'); '''creating a 2d array of the same shape as input_melxx where each element is the maximum value in a 5x5 neighborhood around the corresponding element in input_melxx.'''
+            Pxx=ndimage.maximum_filter(input_melxx, size=5, mode='reflect'); '''creating a 2d array of the same shape as input_melxx where each element is the maximum value in a 5x5 neighborhood around the corresponding element in input_melxx.'''
 
-        PxxFinalIndices=np.where(Pxx==input_melxx);  '''getting indices only where the local max is the original element itself. i.e. only local maximas survive in noise'''
+            PxxFinalIndices=np.where(Pxx==input_melxx);  '''getting indices only where the local max is the original element itself. i.e. only local maximas survive in noise'''
 
-        def get_peaks_for_file():
+        
             for i in range(Pxx.shape[1]):
                 if i in PxxFinalIndices[1]:
                     ValueIndices=np.where(PxxFinalIndices[1]==i)[0]; '''storing all indices where there is a peak for this particular time bin'''
