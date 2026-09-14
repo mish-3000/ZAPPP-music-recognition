@@ -51,7 +51,7 @@ def get_peaks(minFreqBin, maxPeaksPerTimeframe, minDB):
                         Tuple=freqTimeArr[j] ; '''for every peak in this time bin, a freq, time tuple and the peak value is yielded'''
                         yield Tuple
         peaks=[]; '''for all time bins and all their respective peaks, freq, time tuple and peak value is yielded and stored in a dictionary with the key as tuple'''
-        for Tuple in get_peaks_for_file():
+        for Tuple in get_peaks_for_file(file):
             peaks.append(Tuple)
             
         allPeaks[file]=peaks ; '''for all the n-songs, n dictionaries are created with the file name as key that contain dictionary of peak infos of that song'''            

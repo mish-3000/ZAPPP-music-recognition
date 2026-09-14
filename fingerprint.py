@@ -8,7 +8,7 @@ def combinations():
         peaks = allDicts(file)
         combinationsPerFile=[]
         for i in range(len(peaks)):
-            freqA, timeA = peaks[i]
+            timeA, freqA = peaks[i]
             combinationsPerPeak=[]
             if freqA<1000:
                 for j in range(i+1, len(peaks)):
@@ -30,11 +30,11 @@ def combinations():
 def hashes():
     hashinfo={}
     for file in wavFilesPaths:
-        combinations=combinations()[file]
-        for i in range(len(combinations)):
-            freqA, freqB, timeA, deltaT, file = combinations[i]
+        combination=combinations()[file]
+        for i in range(len(combination)):
+            freqA, freqB, timeA, deltaT, file = combination[i]
             hash=((freqA& 0x3FF)<< 22) | ((freqB & 0x3FF) << 12) | (deltaT & 0xFFF)
 
-            hashinfo[file] = (hash, timeA)
+            hashinfo[file].append((hash, timeA))
 
     return hashinfo
