@@ -12,7 +12,7 @@ def combinations():
             combinationsPerPeak=[]
             if freqA<1000:
                 for j in range(i+1, len(peaks)):
-                    freqT, timeT = peaks[j]
+                    timeT, freqT = peaks[j]
                     if freqT<1000 :
                         if timeT-timeA>50:
                             break
@@ -30,10 +30,11 @@ def combinations():
 def hashes():
     hashinfo={}
     for file in wavFilesPaths:
+        hashinfo[file] = []
         combination=combinations()[file]
         for i in range(len(combination)):
             freqA, freqB, timeA, deltaT, file = combination[i]
-            hash=((freqA& 0x3FF)<< 22) | ((freqB & 0x3FF) << 12) | (deltaT & 0xFFF)
+            hash=((int(freqA)& 0x3FF)<< 22) | ((int(freqB) & 0x3FF) << 12) | (int(deltaT*1000) & 0xFFF)
 
             hashinfo[file].append((hash, timeA))
 
